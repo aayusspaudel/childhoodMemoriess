@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buttery Smooth Cursor Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+            cursor: none;
+            overflow-x: hidden;
+        }
+        
+        .demo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .title {
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            max-width: 600px;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        .demo-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .demo-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255,255,255,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        .demo-button {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        
+        .demo-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        
+        .demo-link {
+            color: #4ecdc4;
+            text-decoration: none;
+            font-size: 1.1rem;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin: 5px;
+        }
+        
+        .demo-link:hover {
+            background: rgba(78, 205, 196, 0.2);
+            transform: scale(1.05);
+        }
+        
+        .instructions {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            max-width: 300px;
+        }
+        
+        /* Enhanced Buttery Smooth Cursor */
+        .cursor-main {
+            position: fixed;
+            width: 32px;
+            height: 32px;
+            background: radial-gradient(circle, 
+                rgba(255, 215, 0, 0.8) 0%,     /* Golden butter */
+                rgba(255, 165, 0, 0.6) 30%,    /* Orange cream */
+                rgba(255, 105, 180, 0.4) 60%,  /* Pink blush */
+                rgba(138, 43, 226, 0.2) 80%,   /* Purple magic */
+                transparent 100%
+            );
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            mix-blend-mode: screen;
+            filter: blur(0.5px);
+            animation: cursorBreathing 3s infinite ease-in-out;
+            box-shadow: 
+                0 0 20px rgba(255, 215, 0, 0.3),
+                0 0 40px rgba(255, 165, 0, 0.2),
+                0 0 60px rgba(255, 105, 180, 0.1);
+            transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .cursor-trail {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle,
+                rgba(255, 215, 0, 0.9) 0%,
+                rgba(255, 165, 0, 0.7) 40%,
+                rgba(255, 105, 180, 0.5) 70%,
+                transparent 100%
+            );
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: screen;
+            transition: all 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .cursor-glow {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle,
+                rgba(255, 215, 0, 0.1) 0%,
+                rgba(255, 165, 0, 0.08) 30%,
+                rgba(255, 105, 180, 0.06) 60%,
+                rgba(138, 43, 226, 0.04) 80%,
+                transparent 100%
+            );
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            filter: blur(8px);
+            animation: cursorGlow 4s infinite ease-in-out alternate;
+        }
+
+        .cursor-sparkle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle,
+                rgba(255, 255, 255, 1) 0%,
+                rgba(255, 215, 0, 0.8) 50%,
+                transparent 100%
+            );
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10001;
+            animation: sparkle 2s infinite ease-in-out;
+        }
+
+        @keyframes cursorBreathing {
+            0%, 100% { 
+                transform: scale(1) rotate(0deg); 
+                opacity: 0.9;
+            }
+            33% { 
+                transform: scale(1.1) rotate(120deg); 
+                opacity: 0.7;
+            }
+            66% { 
+                transform: scale(0.95) rotate(240deg); 
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes cursorGlow {
+            0% { 
+                transform: scale(0.8); 
+                opacity: 0.3;
+            }
+            100% { 
+                transform: scale(1.2); 
+                opacity: 0.1;
+            }
+        }
+
+        @keyframes sparkle {
+            0%, 100% { 
+                transform: scale(0) rotate(0deg); 
+                opacity: 0;
+            }
+            50% { 
+                transform: scale(1) rotate(180deg); 
+                opacity: 1;
+            }
+        }
+        
+        @keyframes clickRipple {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor-main"></div>
+    <div class="cursor-glow"></div>
+    <div class="cursor-sparkle"></div>
+    <div class="cursor-trail-container"></div>
+
+    <div class="instructions">
+        <strong>🎨 Buttery Smooth Cursor Demo</strong><br>
+        Move your mouse around to see the smooth, buttery cursor effect with beautiful color gradients!<br><br>
+        • Hover over buttons and links<br>
+        • Click anywhere for ripple effects<br>
+        • Notice the smooth trailing particles
+    </div>
+
+    <div class="demo-container">
+        <h1 class="title">Buttery Smooth Cursor</h1>
+        <p class="subtitle">Experience the smoothest cursor with beautiful color gradients that flow like butter. Move your mouse around and interact with the elements below!</p>
+        
+        <div class="demo-grid">
+            <div class="demo-card">
+                <h3 style="color: white; margin-bottom: 1rem;">Interactive Buttons</h3>
+                <button class="demo-button">Hover Me!</button>
+                <button class="demo-button">Click Me!</button>
+            </div>
+            
+            <div class="demo-card">
+                <h3 style="color: white; margin-bottom: 1rem;">Smooth Links</h3>
+                <a href="#" class="demo-link">Beautiful Link</a>
+                <a href="#" class="demo-link">Another Link</a>
+            </div>
+            
+            <div class="demo-card">
+                <h3 style="color: white; margin-bottom: 1rem;">Color Magic</h3>
+                <p style="color: rgba(255,255,255,0.8);">The cursor changes colors smoothly as you move, creating a buttery smooth experience with golden, orange, pink, and purple hues!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cursorMain = document.querySelector('.cursor-main');
+            const cursorGlow = document.querySelector('.cursor-glow');
+            const cursorSparkle = document.querySelector('.cursor-sparkle');
+            const trailContainer = document.querySelector('.cursor-trail-container');
+            
+            let mouseX = 0, mouseY = 0;
+            let mainCursorX = 0, mainCursorY = 0;
+            let glowCursorX = 0, glowCursorY = 0;
+            let sparkleCursorX = 0, sparkleCursorY = 0;
+            
+            // Create trail particles
+            const trailParticles = [];
+            const maxTrailParticles = 12;
+            
+            for (let i = 0; i < maxTrailParticles; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'cursor-trail';
+                particle.style.opacity = (1 - i / maxTrailParticles) * 0.8;
+                particle.style.transform = `scale(${1 - i / maxTrailParticles * 0.5})`;
+                trailContainer.appendChild(particle);
+                trailParticles.push({
+                    element: particle,
+                    x: 0,
+                    y: 0,
+                    delay: i * 2
+                });
+            }
+            
+            let mouseHistory = [];
+            const maxHistory = 20;
+            
+            // Mouse movement tracking
+            document.addEventListener('mousemove', function(e) {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                // Store mouse history for smooth trailing
+                mouseHistory.unshift({ x: mouseX, y: mouseY });
+                if (mouseHistory.length > maxHistory) {
+                    mouseHistory.pop();
+                }
+            });
+            
+            // Animation loop
+            function animateCursor() {
+                // Main cursor - fastest, most responsive
+                const mainEasing = 0.15;
+                mainCursorX += (mouseX - mainCursorX) * mainEasing;
+                mainCursorY += (mouseY - mainCursorY) * mainEasing;
+                
+                cursorMain.style.left = (mainCursorX - 16) + 'px';
+                cursorMain.style.top = (mainCursorY - 16) + 'px';
+                
+                // Glow cursor - slower, more fluid
+                const glowEasing = 0.08;
+                glowCursorX += (mouseX - glowCursorX) * glowEasing;
+                glowCursorY += (mouseY - glowCursorY) * glowEasing;
+                
+                cursorGlow.style.left = (glowCursorX - 30) + 'px';
+                cursorGlow.style.top = (glowCursorY - 30) + 'px';
+                
+                // Sparkle cursor - medium speed with slight offset
+                const sparkleEasing = 0.12;
+                sparkleCursorX += (mouseX - sparkleCursorX) * sparkleEasing;
+                sparkleCursorY += (mouseY - sparkleCursorY) * sparkleEasing;
+                
+                // Add slight circular motion to sparkle
+                const time = Date.now() * 0.002;
+                const sparkleOffsetX = Math.cos(time) * 3;
+                const sparkleOffsetY = Math.sin(time * 1.3) * 3;
+                
+                cursorSparkle.style.left = (sparkleCursorX - 2 + sparkleOffsetX) + 'px';
+                cursorSparkle.style.top = (sparkleCursorY - 2 + sparkleOffsetY) + 'px';
+                
+                // Trail particles - each with different delay and easing
+                trailParticles.forEach((particle, index) => {
+                    const historyIndex = Math.min(index + 1, mouseHistory.length - 1);
+                    if (mouseHistory[historyIndex]) {
+                        const targetX = mouseHistory[historyIndex].x;
+                        const targetY = mouseHistory[historyIndex].y;
+                        
+                        const easing = 0.05 + (index * 0.01);
+                        particle.x += (targetX - particle.x) * easing;
+                        particle.y += (targetY - particle.y) * easing;
+                        
+                        particle.element.style.left = (particle.x - 4) + 'px';
+                        particle.element.style.top = (particle.y - 4) + 'px';
+                    }
+                });
+                
+                requestAnimationFrame(animateCursor);
+            }
+            
+            // Start animation
+            animateCursor();
+            
+            // Add hover effects for interactive elements
+            const interactiveElements = document.querySelectorAll('button, a, [role="button"], input, textarea, select');
+            
+            interactiveElements.forEach(element => {
+                element.addEventListener('mouseenter', () => {
+                    cursorMain.style.transform = 'scale(1.5)';
+                    cursorMain.style.mixBlendMode = 'multiply';
+                    cursorGlow.style.transform = 'scale(1.3)';
+                });
+                
+                element.addEventListener('mouseleave', () => {
+                    cursorMain.style.transform = 'scale(1)';
+                    cursorMain.style.mixBlendMode = 'screen';
+                    cursorGlow.style.transform = 'scale(1)';
+                });
+            });
+            
+            // Add click ripple effect
+            document.addEventListener('click', (e) => {
+                const ripple = document.createElement('div');
+                ripple.style.position = 'fixed';
+                ripple.style.left = (e.clientX - 25) + 'px';
+                ripple.style.top = (e.clientY - 25) + 'px';
+                ripple.style.width = '50px';
+                ripple.style.height = '50px';
+                ripple.style.borderRadius = '50%';
+                ripple.style.background = 'radial-gradient(circle, rgba(255, 215, 0, 0.6) 0%, transparent 70%)';
+                ripple.style.pointerEvents = 'none';
+                ripple.style.zIndex = '10002';
+                ripple.style.animation = 'clickRipple 0.6s ease-out forwards';
+                
+                document.body.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+            
+            // Hide cursor when leaving window
+            document.addEventListener('mouseleave', () => {
+                cursorMain.style.opacity = '0';
+                cursorGlow.style.opacity = '0';
+                cursorSparkle.style.opacity = '0';
+                trailParticles.forEach(particle => {
+                    particle.element.style.opacity = '0';
+                });
+            });
+            
+            document.addEventListener('mouseenter', () => {
+                cursorMain.style.opacity = '0.9';
+                cursorGlow.style.opacity = '1';
+                cursorSparkle.style.opacity = '1';
+                trailParticles.forEach((particle, index) => {
+                    particle.element.style.opacity = (1 - index / maxTrailParticles) * 0.8;
+                });
+            });
+        });
+    </script>
+</body>
+</html>
